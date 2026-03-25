@@ -1,0 +1,2066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noor — Find Your Match</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1a6b6b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Noor">
+<script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf6f0;
+    --warm-white: #fff9f2;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --teal: #1a6b6b;
+    --teal-light: #2a8a8a;
+    --teal-dark: #0f4a4a;
+    --text-dark: #1a1a2e;
+    --text-mid: #4a4a6a;
+    --text-light: #8888aa;
+    --rose: #c97a7a;
+    --shadow: rgba(26,107,107,0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; width: 100%; min-height: 100vh; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* ── SPLASH ── */
+  #splash {
+    background: linear-gradient(160deg, var(--teal-dark) 0%, var(--teal) 55%, #2a7a6a 100%);
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  #splash::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  /* Decorative geometric islamic pattern */
+  .splash-pattern {
+    position: absolute;
+    width: 400px; height: 400px;
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 50%;
+    top: -100px; right: -100px;
+    animation: rotate 40s linear infinite;
+  }
+  .splash-pattern::before {
+    content: '';
+    position: absolute;
+    inset: 30px;
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 50%;
+  }
+  .splash-pattern::after {
+    content: '';
+    position: absolute;
+    inset: 70px;
+    border: 1px solid rgba(201,168,76,0.1);
+    border-radius: 50%;
+  }
+  .splash-pattern2 {
+    position: absolute;
+    width: 300px; height: 300px;
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 50%;
+    bottom: -80px; left: -80px;
+    animation: rotate 30s linear infinite reverse;
+  }
+  @keyframes rotate { to { transform: rotate(360deg); } }
+
+  .splash-content {
+    position: relative;
+    text-align: center;
+    animation: fadeUp 0.8s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .logo-mark {
+    width: 90px; height: 90px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    border-radius: 28px;
+    margin: 0 auto 24px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px;
+    color: var(--teal-dark);
+    font-weight: 600;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    position: relative;
+  }
+  .logo-mark::after {
+    content: '☽';
+    position: absolute;
+    top: -12px; right: -12px;
+    font-size: 22px;
+    color: var(--gold-light);
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  }
+
+  .app-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px;
+    font-weight: 300;
+    color: white;
+    letter-spacing: 3px;
+  }
+  .app-tagline {
+    font-size: 14px;
+    color: rgba(255,255,255,0.65);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 8px;
+    margin-bottom: 60px;
+  }
+
+  .splash-btn {
+    display: block;
+    width: 240px;
+    margin: 0 auto 16px;
+    padding: 16px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.2s;
+  }
+  .btn-primary-splash {
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: var(--teal-dark);
+    box-shadow: 0 8px 24px rgba(201,168,76,0.4);
+  }
+  .btn-primary-splash:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(201,168,76,0.5); }
+  .btn-outline-splash {
+    background: transparent;
+    color: white;
+    border: 1.5px solid rgba(255,255,255,0.4);
+  }
+  .btn-outline-splash:hover { border-color: white; background: rgba(255,255,255,0.1); }
+
+  /* ── ONBOARDING ── */
+  #onboarding {
+    background: var(--warm-white);
+  }
+  .onboarding-header {
+    padding: 60px 32px 32px;
+    text-align: center;
+  }
+  .step-dots {
+    display: flex; gap: 8px; justify-content: center; margin-bottom: 40px;
+  }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #ddd;
+    transition: all 0.3s;
+  }
+  .dot.active { width: 24px; border-radius: 4px; background: var(--teal); }
+
+  .onboarding-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 400;
+    color: var(--teal-dark);
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .onboarding-sub {
+    font-size: 14px;
+    color: var(--text-light);
+    line-height: 1.6;
+  }
+
+  .onboarding-body { padding: 0 32px; flex: 1; }
+
+  .form-group { margin-bottom: 20px; }
+  .form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-mid);
+    margin-bottom: 8px;
+  }
+  .form-input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1.5px solid #e8e0d8;
+    border-radius: 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    background: white;
+    color: var(--text-dark);
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .form-input:focus { border-color: var(--teal); }
+
+  .gender-select {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .gender-btn {
+    padding: 14px;
+    border-radius: 14px;
+    border: 1.5px solid #e8e0d8;
+    background: white;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-mid);
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .gender-btn.selected {
+    border-color: var(--teal);
+    background: rgba(26,107,107,0.07);
+    color: var(--teal);
+  }
+
+  .chips-grid {
+    display: flex; flex-wrap: wrap; gap: 10px;
+  }
+  .chip {
+    padding: 8px 16px;
+    border-radius: 50px;
+    border: 1.5px solid #e8e0d8;
+    background: white;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-mid);
+    transition: all 0.2s;
+  }
+  .chip.selected {
+    border-color: var(--teal);
+    background: var(--teal);
+    color: white;
+  }
+
+  .onboarding-footer {
+    padding: 24px 32px 40px;
+  }
+  .btn-next {
+    width: 100%;
+    padding: 16px;
+    border-radius: 50px;
+    border: none;
+    background: linear-gradient(135deg, var(--teal), var(--teal-light));
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 24px var(--shadow);
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .btn-next:hover { transform: translateY(-2px); }
+
+  /* ── MAIN APP ── */
+  #app { background: var(--cream); }
+
+  /* Nav */
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px 16px;
+    background: white;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--teal-dark);
+    letter-spacing: 2px;
+  }
+  .nav-logo span { color: var(--gold); }
+  .nav-icon-btn {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    border: none; background: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+    color: var(--text-mid);
+    position: relative;
+    transition: background 0.2s;
+  }
+  .nav-icon-btn:hover { background: var(--cream); }
+  .badge {
+    position: absolute;
+    top: 4px; right: 4px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--rose);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid white;
+  }
+
+  /* Tab bar */
+  .tab-bar {
+    display: flex;
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: white;
+    border-top: 1px solid rgba(0,0,0,0.07);
+    padding: 10px 0 20px;
+    z-index: 100;
+  }
+  .tab-btn {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    border: none; background: none; cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-light);
+    transition: color 0.2s;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 8px 4px;
+  }
+  .tab-btn .tab-icon { font-size: 22px; line-height: 1; }
+  .tab-btn.active { color: var(--teal); }
+  .tab-btn.active .tab-icon { filter: drop-shadow(0 2px 4px rgba(26,107,107,0.3)); }
+
+  /* Content area */
+  .content-area {
+    padding: 20px 20px 100px;
+  }
+
+  /* ── DISCOVER TAB ── */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Profile Cards */
+  .card-stack {
+    position: relative;
+    height: 500px;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+  .profile-card {
+    position: absolute;
+    inset: 0;
+    border-radius: 28px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+    cursor: grab;
+    user-select: none;
+    transition: transform 0.08s;
+  }
+  .profile-card:nth-child(2) { transform: rotate(-3deg) scale(0.95); z-index: 1; }
+  .profile-card:nth-child(3) { transform: rotate(3deg) scale(0.9); z-index: 0; }
+  .profile-card:first-child { z-index: 10; }
+
+  .card-photo {
+    width: 100%; height: 340px;
+    object-fit: cover;
+    background: linear-gradient(135deg, #b8d8d8 0%, #a8c8c8 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 80px;
+  }
+  .card-gradient {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 55%;
+    background: linear-gradient(to top, rgba(10,40,40,0.92) 0%, transparent 100%);
+    border-radius: 0 0 28px 28px;
+  }
+  .card-info {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 24px;
+    color: white;
+  }
+  .card-name-age {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px;
+    font-weight: 400;
+    margin-bottom: 4px;
+  }
+  .card-detail { font-size: 13px; color: rgba(255,255,255,0.8); margin-bottom: 12px; }
+  .card-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .card-tag {
+    padding: 4px 10px;
+    border-radius: 50px;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(4px);
+    font-size: 11px;
+    font-weight: 600;
+    color: white;
+  }
+
+  /* Action buttons */
+  .action-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 24px;
+    max-width: 380px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .action-btn {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    transition: all 0.2s;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  }
+  .action-btn:hover { transform: scale(1.08); }
+  .btn-pass { background: white; color: var(--rose); font-size: 28px; }
+  .btn-like { background: linear-gradient(135deg, var(--teal), var(--teal-light)); color: white; font-size: 28px; width: 76px; height: 76px; }
+  .btn-super { background: white; color: var(--gold); font-size: 22px; }
+
+  /* ── MATCHES TAB ── */
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--teal-dark);
+    margin-bottom: 16px;
+  }
+
+  .new-matches-scroll {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scrollbar-width: none;
+    margin-bottom: 32px;
+  }
+  .new-matches-scroll::-webkit-scrollbar { display: none; }
+
+  .match-bubble {
+    flex-shrink: 0;
+    text-align: center;
+    cursor: pointer;
+  }
+  .match-avatar {
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #b8d8d8, #a8c8c8);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    border: 3px solid white;
+    box-shadow: 0 4px 12px var(--shadow);
+    margin: 0 auto 6px;
+    position: relative;
+  }
+  .match-avatar.new-match::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    animation: pulse 2s ease infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.05); }
+  }
+  .match-name { font-size: 12px; font-weight: 600; color: var(--text-mid); }
+
+  /* Conversations */
+  .convo-list { display: flex; flex-direction: column; gap: 4px; }
+  .convo-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: 18px;
+    background: white;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .convo-item:hover { background: #f0ece6; }
+  .convo-avatar {
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #b8d8d8, #a8c8c8);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .convo-info { flex: 1; min-width: 0; }
+  .convo-name { font-weight: 700; font-size: 15px; color: var(--text-dark); margin-bottom: 2px; }
+  .convo-preview {
+    font-size: 13px;
+    color: var(--text-light);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .convo-meta { text-align: right; flex-shrink: 0; }
+  .convo-time { font-size: 11px; color: var(--text-light); margin-bottom: 4px; }
+  .convo-unread {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--teal);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    margin-left: auto;
+  }
+
+  /* ── CHAT SCREEN ── */
+  #chat-screen {
+    background: var(--warm-white);
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(.4,0,.2,1);
+  }
+  #chat-screen.open { transform: translateX(0); }
+
+  .chat-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 20px 16px;
+    background: white;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+  .chat-back {
+    background: none; border: none; cursor: pointer;
+    font-size: 22px; color: var(--teal); padding: 4px;
+  }
+  .chat-peer-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #b8d8d8, #a8c8c8);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  .chat-peer-info .peer-name { font-weight: 700; font-size: 15px; }
+  .chat-peer-info .peer-status { font-size: 12px; color: var(--teal); }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: calc(100vh - 140px);
+  }
+
+  .msg-wrap { display: flex; flex-direction: column; }
+  .msg-wrap.mine { align-items: flex-end; }
+  .msg-wrap.theirs { align-items: flex-start; }
+
+  .msg-bubble {
+    max-width: 75%;
+    padding: 12px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .msg-wrap.mine .msg-bubble {
+    background: linear-gradient(135deg, var(--teal), var(--teal-light));
+    color: white;
+    border-bottom-right-radius: 6px;
+  }
+  .msg-wrap.theirs .msg-bubble {
+    background: white;
+    color: var(--text-dark);
+    border-bottom-left-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  }
+  .msg-time { font-size: 10px; color: var(--text-light); margin-top: 4px; padding: 0 4px; }
+
+  .chat-guardian-note {
+    background: rgba(201,168,76,0.12);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 14px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #8a7040;
+    text-align: center;
+    margin: 0 20px 12px;
+  }
+
+  .chat-input-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px 28px;
+    background: white;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+  }
+  .chat-input {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 50px;
+    border: 1.5px solid #e8e0d8;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    background: var(--cream);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .chat-input:focus { border-color: var(--teal); }
+  .chat-send-btn {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, var(--teal), var(--teal-light));
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s;
+  }
+  .chat-send-btn:hover { transform: scale(1.05); }
+
+  /* ── PROFILE TAB ── */
+  .profile-header-card {
+    background: linear-gradient(135deg, var(--teal-dark), var(--teal));
+    border-radius: 24px;
+    padding: 32px 24px;
+    text-align: center;
+    color: white;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .profile-header-card::before {
+    content: '☽';
+    position: absolute;
+    top: 16px; right: 24px;
+    font-size: 36px;
+    opacity: 0.2;
+  }
+  .profile-avatar-big {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 44px;
+    margin: 0 auto 16px;
+    border: 3px solid rgba(255,255,255,0.4);
+  }
+  .profile-display-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 400;
+    margin-bottom: 4px;
+  }
+  .profile-display-sub { font-size: 13px; opacity: 0.75; }
+
+  .profile-section {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .profile-section-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 16px;
+  }
+  .profile-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+  .profile-row:last-child { border-bottom: none; }
+  .profile-row-icon { font-size: 20px; width: 28px; text-align: center; }
+  .profile-row-label { flex: 1; font-size: 14px; color: var(--text-dark); }
+  .profile-row-value { font-size: 13px; color: var(--text-light); }
+
+  .premium-banner {
+    background: linear-gradient(135deg, #8a6a1a, var(--gold), #c9a84c);
+    border-radius: 20px;
+    padding: 20px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .premium-banner:hover { transform: translateY(-2px); }
+  .premium-icon { font-size: 36px; }
+  .premium-text .premium-title { font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+  .premium-text .premium-sub { font-size: 12px; opacity: 0.85; }
+
+  /* ── COUNTRY FILTER ── */
+  .country-filter-row {
+    margin-bottom: 16px;
+  }
+  .country-search-wrap {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 1.5px solid #e8e0d8;
+    border-radius: 14px;
+    padding: 0 16px;
+    gap: 10px;
+    transition: border-color 0.2s;
+  }
+  .country-search-wrap:focus-within { border-color: var(--teal); }
+  .csearch-icon { font-size: 18px; flex-shrink: 0; }
+  .country-search-select {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+    padding: 13px 0;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+  }
+
+  /* Style select dropdowns like inputs */
+  select.form-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238888aa' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; cursor: pointer; }
+
+  /* No more cards message */
+  .no-more-cards {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-light);
+  }
+  .no-more-cards .nmc-icon { font-size: 48px; margin-bottom: 16px; }
+  .no-more-cards .nmc-title { font-family: 'Cormorant Garamond', serif; font-size: 24px; color: var(--text-mid); margin-bottom: 8px; }
+  .no-more-cards .nmc-sub { font-size: 13px; line-height: 1.6; }
+  .match-popup {
+    display: none;
+    position: fixed; inset: 0; z-index: 300;
+    background: rgba(10,40,40,0.9);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+  }
+  .match-popup.show { display: flex; animation: popIn 0.4s ease both; }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .match-popup-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px;
+    font-weight: 300;
+    color: var(--gold-light);
+    margin-bottom: 8px;
+  }
+  .match-popup-sub { color: rgba(255,255,255,0.7); font-size: 15px; margin-bottom: 40px; }
+  .match-avatars {
+    display: flex; gap: 20px; margin-bottom: 40px; align-items: center;
+  }
+  .match-avatar-big {
+    width: 110px; height: 110px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #b8d8d8, #a8c8c8);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 52px;
+    border: 4px solid var(--gold);
+    box-shadow: 0 0 30px rgba(201,168,76,0.3);
+  }
+  .match-heart { font-size: 32px; color: var(--gold); }
+  .btn-send-msg {
+    padding: 16px 40px;
+    border-radius: 50px;
+    border: none;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: var(--teal-dark);
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 12px;
+    box-shadow: 0 8px 24px rgba(201,168,76,0.4);
+  }
+  .btn-keep-swiping {
+    background: none; border: 1.5px solid rgba(255,255,255,0.3);
+    color: white; border-radius: 50px;
+    padding: 14px 40px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    cursor: pointer;
+  }
+
+  /* Swipe feedback overlays */
+  .like-overlay, .pass-overlay {
+    position: absolute;
+    top: 40px; padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    opacity: 0;
+    pointer-events: none;
+    transform: rotate(-15deg);
+    z-index: 20;
+    transition: opacity 0.1s;
+    border: 4px solid;
+  }
+  .like-overlay { left: 24px; color: var(--teal); border-color: var(--teal); transform: rotate(-15deg); }
+  .pass-overlay { right: 24px; color: var(--rose); border-color: var(--rose); transform: rotate(15deg); }
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash" class="screen active">
+  <div class="splash-pattern"></div>
+  <div class="splash-pattern2"></div>
+  <div class="splash-content">
+    <div class="logo-mark">N</div>
+    <div class="app-name">Noor</div>
+    <div class="app-tagline">Find your other half</div>
+    <button class="splash-btn btn-primary-splash" onclick="showScreen('onboarding')">Create Account</button>
+    <button class="splash-btn btn-outline-splash" onclick="showScreen('app')">Sign In</button>
+  </div>
+</div>
+
+<!-- ONBOARDING -->
+<div id="onboarding" class="screen">
+  <div class="onboarding-header">
+    <div class="step-dots">
+      <div class="dot active" id="dot-1"></div>
+      <div class="dot" id="dot-2"></div>
+      <div class="dot" id="dot-3"></div>
+      <div class="dot" id="dot-4"></div>
+    </div>
+    <div class="onboarding-title" id="ob-title">Welcome to Noor ☽</div>
+    <div class="onboarding-sub" id="ob-sub">Let's build your profile for a halal, meaningful connection</div>
+  </div>
+
+  <!-- Step 1: Basic info -->
+  <div class="onboarding-body" id="ob-step-1">
+    <div class="form-group">
+      <label class="form-label">First Name</label>
+      <input class="form-input" type="text" placeholder="Your first name" id="inp-name">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Date of Birth</label>
+      <input class="form-input" type="date" id="inp-dob">
+    </div>
+    <div class="form-group">
+      <label class="form-label">I am</label>
+      <div class="gender-select">
+        <button class="gender-btn" onclick="selectGender(this, 'Brother')">👨 Brother</button>
+        <button class="gender-btn" onclick="selectGender(this, 'Sister')">👩 Sister</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Looking for</label>
+      <div class="gender-select">
+        <button class="gender-btn" onclick="selectLooking(this, 'Brother')">👨 A Brother</button>
+        <button class="gender-btn" onclick="selectLooking(this, 'Sister')">👩 A Sister</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2: Background -->
+  <div class="onboarding-body" id="ob-step-2" style="display:none">
+    <div class="form-group">
+      <label class="form-label">Ethnicity / Background</label>
+      <div class="chips-grid">
+        <div class="chip" onclick="toggleChip(this)">Arab</div>
+        <div class="chip" onclick="toggleChip(this)">South Asian</div>
+        <div class="chip" onclick="toggleChip(this)">Turkish</div>
+        <div class="chip" onclick="toggleChip(this)">African</div>
+        <div class="chip" onclick="toggleChip(this)">Southeast Asian</div>
+        <div class="chip" onclick="toggleChip(this)">European</div>
+        <div class="chip" onclick="toggleChip(this)">North American</div>
+        <div class="chip" onclick="toggleChip(this)">Mixed</div>
+        <div class="chip" onclick="toggleChip(this)">Prefer not to say</div>
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:20px">
+      <label class="form-label">Country of Origin</label>
+      <select class="form-input" id="inp-origin" onchange="populateCities('inp-origin','inp-origin-city')"></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">City of Origin</label>
+      <select class="form-input" id="inp-origin-city"><option value="">Select country first…</option></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Current Country of Residence</label>
+      <select class="form-input" id="inp-location" onchange="populateCities('inp-location','inp-location-city')"></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Current City</label>
+      <select class="form-input" id="inp-location-city"><option value="">Select country first…</option></select>
+    </div>
+  </div>
+
+  <!-- Step 3: Deen -->
+  <div class="onboarding-body" id="ob-step-3" style="display:none">
+    <div class="form-group">
+      <label class="form-label">Sect</label>
+      <div class="chips-grid">
+        <div class="chip" onclick="toggleChip(this)">Sunni</div>
+        <div class="chip" onclick="toggleChip(this)">Shia</div>
+        <div class="chip" onclick="toggleChip(this)">Sufi</div>
+        <div class="chip" onclick="toggleChip(this)">Prefer not to say</div>
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:20px">
+      <label class="form-label">Practice Level</label>
+      <div class="chips-grid">
+        <div class="chip" onclick="toggleChip(this)">Very practicing</div>
+        <div class="chip" onclick="toggleChip(this)">Moderately practicing</div>
+        <div class="chip" onclick="toggleChip(this)">Cultural Muslim</div>
+        <div class="chip" onclick="toggleChip(this)">Still learning</div>
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:20px">
+      <label class="form-label">Hijab / Beard</label>
+      <div class="chips-grid">
+        <div class="chip" onclick="toggleChip(this)">Yes, I do</div>
+        <div class="chip" onclick="toggleChip(this)">No</div>
+        <div class="chip" onclick="toggleChip(this)">Sometimes</div>
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:20px">
+      <label class="form-label">Prayer</label>
+      <div class="chips-grid">
+        <div class="chip" onclick="toggleChip(this)">5 times daily</div>
+        <div class="chip" onclick="toggleChip(this)">Jumu'ah + some</div>
+        <div class="chip" onclick="toggleChip(this)">Occasionally</div>
+        <div class="chip" onclick="toggleChip(this)">Working on it</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4: About -->
+  <div class="onboarding-body" id="ob-step-4" style="display:none">
+    <div class="form-group">
+      <label class="form-label">About Me</label>
+      <textarea class="form-input" rows="4" placeholder="Share a little about yourself — your values, aspirations, what you're looking for in a spouse..." style="resize:none; font-family: inherit;"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Interests & Hobbies</label>
+      <div class="chips-grid">
+        <div class="chip" onclick="toggleChip(this)">📖 Islamic Studies</div>
+        <div class="chip" onclick="toggleChip(this)">✈️ Travel</div>
+        <div class="chip" onclick="toggleChip(this)">🍳 Cooking</div>
+        <div class="chip" onclick="toggleChip(this)">📚 Reading</div>
+        <div class="chip" onclick="toggleChip(this)">🏃 Fitness</div>
+        <div class="chip" onclick="toggleChip(this)">🎨 Art</div>
+        <div class="chip" onclick="toggleChip(this)">💻 Tech</div>
+        <div class="chip" onclick="toggleChip(this)">🌿 Nature</div>
+        <div class="chip" onclick="toggleChip(this)">🎵 Music</div>
+        <div class="chip" onclick="toggleChip(this)">📿 Volunteering</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="onboarding-footer">
+    <button class="btn-next" id="ob-next-btn" onclick="nextStep()">Continue →</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" class="screen">
+  <!-- Nav -->
+  <div class="nav-bar">
+    <div class="nav-logo">N<span>oor</span></div>
+    <div style="display:flex;gap:4px">
+      <button class="nav-icon-btn">⚙️</button>
+      <button class="nav-icon-btn">
+        🔔
+        <span class="badge">3</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Tab contents -->
+  <div class="content-area">
+
+    <!-- DISCOVER -->
+    <div class="tab-content active" id="tab-discover">
+
+      <!-- Country + City Filter -->
+      <div class="country-filter-row">
+        <div class="country-search-wrap">
+          <span class="csearch-icon">🌍</span>
+          <select class="country-search-select" id="countryFilterSelect" onchange="filterBySelect()">
+            <option value="All">All Countries</option>
+          </select>
+        </div>
+        <div class="country-search-wrap" style="margin-top:10px">
+          <span class="csearch-icon">📍</span>
+          <select class="country-search-select" id="cityFilterSelect" onchange="filterBySelect()">
+            <option value="All">All Cities</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card-stack" id="cardStack">
+        <!-- Card 3 (back) -->
+        <div class="profile-card" data-country="Egypt" data-city="Cairo">
+          <div class="card-photo">👩</div>
+          <div class="card-gradient"></div>
+          <div class="card-info">
+            <div class="card-name-age">Amira, 26</div>
+            <div class="card-detail">📍 Cairo, Egypt 🇪🇬 • Engineer</div>
+            <div class="card-tags">
+              <span class="card-tag">Practicing</span>
+              <span class="card-tag">Hijabi</span>
+              <span class="card-tag">Sunni</span>
+            </div>
+          </div>
+        </div>
+        <!-- Card 2 (middle) -->
+        <div class="profile-card" data-country="United States" data-city="New York">
+          <div class="card-photo">👩</div>
+          <div class="card-gradient"></div>
+          <div class="card-info">
+            <div class="card-name-age">Mariam, 24</div>
+            <div class="card-detail">📍 New York, USA 🇺🇸 • Med Student</div>
+            <div class="card-tags">
+              <span class="card-tag">Very Practicing</span>
+              <span class="card-tag">Hijabi</span>
+              <span class="card-tag">Egyptian-American</span>
+            </div>
+          </div>
+        </div>
+        <!-- Card 1 (front) -->
+        <div class="profile-card" id="topCard" data-country="Pakistan" data-city="Lahore">
+          <div class="like-overlay" id="likeOverlay">LIKE ♡</div>
+          <div class="pass-overlay" id="passOverlay">PASS ✕</div>
+          <div class="card-photo">👩‍🦱</div>
+          <div class="card-gradient"></div>
+          <div class="card-info">
+            <div class="card-name-age">Fatima, 27</div>
+            <div class="card-detail">📍 Lahore, Pakistan 🇵🇰 • Teacher</div>
+            <div class="card-tags">
+              <span class="card-tag">Practicing</span>
+              <span class="card-tag">Hijabi</span>
+              <span class="card-tag">Pakistani</span>
+              <span class="card-tag">Sunni</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="action-btn btn-pass" onclick="swipeAction('pass')">✕</button>
+        <button class="action-btn btn-like" onclick="swipeAction('like')">♡</button>
+        <button class="action-btn btn-super" onclick="swipeAction('super')">⭐</button>
+      </div>
+    </div>
+
+    <!-- MATCHES -->
+    <div class="tab-content" id="tab-matches">
+      <div class="section-title">New Matches ✨</div>
+      <div class="new-matches-scroll">
+        <div class="match-bubble" onclick="openChat('Zainab', '🧕')">
+          <div class="match-avatar new-match">🧕</div>
+          <div class="match-name">Zainab</div>
+        </div>
+        <div class="match-bubble" onclick="openChat('Nadia', '👩')">
+          <div class="match-avatar new-match">👩</div>
+          <div class="match-name">Nadia</div>
+        </div>
+        <div class="match-bubble" onclick="openChat('Sara', '👩‍🦰')">
+          <div class="match-avatar">👩‍🦰</div>
+          <div class="match-name">Sara</div>
+        </div>
+        <div class="match-bubble" onclick="openChat('Layla', '👩‍🦱')">
+          <div class="match-avatar">👩‍🦱</div>
+          <div class="match-name">Layla</div>
+        </div>
+      </div>
+
+      <div class="section-title">Messages</div>
+      <div class="convo-list">
+        <div class="convo-item" onclick="openChat('Zainab', '🧕')">
+          <div class="convo-avatar">🧕</div>
+          <div class="convo-info">
+            <div class="convo-name">Zainab</div>
+            <div class="convo-preview">Assalamu alaikum! Nice to meet you 😊</div>
+          </div>
+          <div class="convo-meta">
+            <div class="convo-time">2m</div>
+            <div class="convo-unread">2</div>
+          </div>
+        </div>
+        <div class="convo-item" onclick="openChat('Nadia', '👩')">
+          <div class="convo-avatar">👩</div>
+          <div class="convo-info">
+            <div class="convo-name">Nadia</div>
+            <div class="convo-preview">I love that you're into Islamic history!</div>
+          </div>
+          <div class="convo-meta">
+            <div class="convo-time">1h</div>
+            <div class="convo-unread">1</div>
+          </div>
+        </div>
+        <div class="convo-item" onclick="openChat('Sara', '👩‍🦰')">
+          <div class="convo-avatar">👩‍🦰</div>
+          <div class="convo-info">
+            <div class="convo-name">Sara</div>
+            <div class="convo-preview">You: Wa alaikum assalam! 😊</div>
+          </div>
+          <div class="convo-meta">
+            <div class="convo-time">3h</div>
+          </div>
+        </div>
+        <div class="convo-item" onclick="openChat('Layla', '👩‍🦱')">
+          <div class="convo-avatar">👩‍🦱</div>
+          <div class="convo-info">
+            <div class="convo-name">Layla</div>
+            <div class="convo-preview">Yes! I visited Madinah last year mashallah</div>
+          </div>
+          <div class="convo-meta">
+            <div class="convo-time">Yesterday</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="tab-content" id="tab-profile">
+      <div class="profile-header-card">
+        <div class="profile-avatar-big">👨</div>
+        <div class="profile-display-name">Ibrahim</div>
+        <div class="profile-display-sub">28 · Toronto, Canada · Software Engineer</div>
+      </div>
+
+      <div class="premium-banner" id="premiumBanner" onclick="openPaywall()">
+        <div class="premium-icon" id="premiumBannerIcon">⭐</div>
+        <div class="premium-text">
+          <div class="premium-title" id="premiumBannerTitle">Upgrade to Noor Gold</div>
+          <div class="premium-sub" id="premiumBannerSub">Unlimited features · Only $5/month</div>
+        </div>
+        <div style="margin-left:auto; font-size:18px;" id="premiumBannerArrow">›</div>
+      </div>
+
+      <div class="profile-section">
+        <div class="profile-section-title">My Deen</div>
+        <div class="profile-row">
+          <div class="profile-row-icon">🕌</div>
+          <div class="profile-row-label">Sect</div>
+          <div class="profile-row-value">Sunni</div>
+        </div>
+        <div class="profile-row">
+          <div class="profile-row-icon">🙏</div>
+          <div class="profile-row-label">Prayer</div>
+          <div class="profile-row-value">5 times daily</div>
+        </div>
+        <div class="profile-row">
+          <div class="profile-row-icon">📿</div>
+          <div class="profile-row-label">Practice</div>
+          <div class="profile-row-value">Very practicing</div>
+        </div>
+        <div class="profile-row">
+          <div class="profile-row-icon">🧔</div>
+          <div class="profile-row-label">Beard</div>
+          <div class="profile-row-value">Yes</div>
+        </div>
+      </div>
+
+      <div class="profile-section">
+        <div class="profile-section-title">Background</div>
+        <div class="profile-row">
+          <div class="profile-row-icon">🌍</div>
+          <div class="profile-row-label">Ethnicity</div>
+          <div class="profile-row-value">South Asian</div>
+        </div>
+        <div class="profile-row">
+          <div class="profile-row-icon">🏠</div>
+          <div class="profile-row-label">Origin</div>
+          <div class="profile-row-value">Pakistan</div>
+        </div>
+        <div class="profile-row">
+          <div class="profile-row-icon">💼</div>
+          <div class="profile-row-label">Profession</div>
+          <div class="profile-row-value">Software Engineer</div>
+        </div>
+        <div class="profile-row">
+          <div class="profile-row-icon">🎓</div>
+          <div class="profile-row-label">Education</div>
+          <div class="profile-row-value">Bachelor's</div>
+        </div>
+      </div>
+
+      <div class="profile-section">
+        <div class="profile-section-title">Marriage</div>
+        <div class="profile-row">
+          <div class="profile-row-icon">💍</div>
+          <div class="profile-row-label">Marital Status</div>
+          <div class="profile-row-value">Never married</div>
+        </div>
+        <div class="profile-row">
+          <div class="profile-row-icon">👶</div>
+          <div class="profile-row-label">Children</div>
+          <div class="profile-row-value">Want children</div>
+        </div>
+        <div class="profile-row">
+          <div class="profile-row-icon">⏱️</div>
+          <div class="profile-row-label">Timeline</div>
+          <div class="profile-row-value">Within 2 years</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content-area -->
+
+  <!-- Tab Bar -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('discover', this)">
+      <span class="tab-icon">🔍</span>
+      Discover
+    </button>
+    <button class="tab-btn" onclick="switchTab('matches', this)">
+      <span class="tab-icon">💬</span>
+      Matches
+    </button>
+    <button class="tab-btn" onclick="switchTab('profile', this)">
+      <span class="tab-icon">👤</span>
+      Profile
+    </button>
+  </div>
+</div>
+
+<!-- CHAT SCREEN -->
+<div id="chat-screen">
+  <div class="chat-header">
+    <button class="chat-back" onclick="closeChat()">‹</button>
+    <div class="chat-peer-avatar" id="chatAvatar">🧕</div>
+    <div class="chat-peer-info">
+      <div class="peer-name" id="chatName">Zainab</div>
+      <div class="peer-status">Matched today ✨</div>
+    </div>
+  </div>
+
+  <div class="chat-guardian-note">
+    ☽ Conversations are kept respectful. A Wali (guardian) can be invited at any time.
+  </div>
+
+  <div class="chat-messages" id="chatMessages">
+    <div class="msg-wrap theirs">
+      <div class="msg-bubble">Assalamu alaikum! It's really nice to match with you 😊</div>
+      <div class="msg-time">2:34 PM</div>
+    </div>
+    <div class="msg-wrap theirs">
+      <div class="msg-bubble">I noticed you're also into reading and travel — what's the last book you read?</div>
+      <div class="msg-time">2:35 PM</div>
+    </div>
+    <div class="msg-wrap mine">
+      <div class="msg-bubble">Wa alaikum assalam! Lovely to match too, alhamdulillah 😊</div>
+      <div class="msg-time">2:40 PM</div>
+    </div>
+    <div class="msg-wrap mine">
+      <div class="msg-bubble">I just finished "In the Light of What We Know" — amazing. You?</div>
+      <div class="msg-time">2:40 PM</div>
+    </div>
+  </div>
+
+  <div class="chat-input-bar">
+    <input class="chat-input" id="msgInput" placeholder="Type a message..." onkeydown="handleMsgKey(event)">
+    <button class="chat-send-btn" onclick="sendMsg()">➤</button>
+  </div>
+</div>
+
+<!-- MATCH POPUP -->
+<div class="match-popup" id="matchPopup">
+  <div class="match-popup-title">It's a Match!</div>
+  <div class="match-popup-sub">You and Fatima both liked each other 💚</div>
+  <div class="match-avatars">
+    <div class="match-avatar-big">👨</div>
+    <div class="match-heart">💚</div>
+    <div class="match-avatar-big">👩‍🦱</div>
+  </div>
+  <button class="btn-send-msg" onclick="closeMatch(); openChat('Fatima', '👩‍🦱')">Send a Message</button>
+  <button class="btn-keep-swiping" onclick="closeMatch()">Keep Discovering</button>
+</div>
+
+<script>
+  // ── SCREEN MANAGEMENT ──
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  // ── ONBOARDING ──
+  let obStep = 1;
+  const steps = { 1: 'ob-step-1', 2: 'ob-step-2', 3: 'ob-step-3', 4: 'ob-step-4' };
+  const titles = ['Welcome to Noor ☽', 'Your Background', 'Your Deen', 'About You'];
+  const subs = [
+    'Let's build your profile for a halal, meaningful connection',
+    'Help others understand where you come from',
+    'Your practice and values matter',
+    'Let your personality shine through'
+  ];
+
+  function nextStep() {
+    if (obStep < 4) {
+      document.getElementById(steps[obStep]).style.display = 'none';
+      obStep++;
+      document.getElementById(steps[obStep]).style.display = 'block';
+      document.getElementById('ob-title').textContent = titles[obStep - 1];
+      document.getElementById('ob-sub').textContent = subs[obStep - 1];
+      document.querySelectorAll('.dot').forEach((d, i) => {
+        d.classList.toggle('active', i < obStep);
+      });
+      if (obStep === 4) document.getElementById('ob-next-btn').textContent = 'Find My Match ☽';
+    } else {
+      showScreen('app');
+    }
+  }
+
+  function selectGender(btn, val) {
+    btn.parentElement.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
+  function selectLooking(btn, val) {
+    btn.parentElement.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
+  function toggleChip(chip) { chip.classList.toggle('selected'); }
+
+  // ── TABS ──
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // ── SWIPE ──
+  let likeCount = 0;
+  function swipeAction(type) {
+    const card = document.getElementById('topCard');
+    const stack = document.getElementById('cardStack');
+    if (!card) return;
+
+    const overlay = type === 'like' || type === 'super'
+      ? document.getElementById('likeOverlay')
+      : document.getElementById('passOverlay');
+    overlay.style.opacity = '1';
+
+    const dir = type === 'pass' ? -1 : 1;
+    card.style.transition = 'transform 0.4s, opacity 0.4s';
+    card.style.transform = `translateX(${dir * 400}px) rotate(${dir * 15}deg)`;
+    card.style.opacity = '0';
+
+    setTimeout(() => {
+      card.remove();
+      likeCount++;
+      if (type === 'like' && likeCount === 1) {
+        setTimeout(() => document.getElementById('matchPopup').classList.add('show'), 300);
+      }
+    }, 400);
+  }
+
+  // Drag to swipe
+  (function() {
+    let startX = 0, isDragging = false, card;
+    document.addEventListener('mousedown', e => {
+      card = document.getElementById('topCard');
+      if (!card || !card.contains(e.target)) return;
+      isDragging = true; startX = e.clientX;
+    });
+    document.addEventListener('mousemove', e => {
+      if (!isDragging || !card) return;
+      const dx = e.clientX - startX;
+      card.style.transform = `translateX(${dx}px) rotate(${dx * 0.05}deg)`;
+      const lo = document.getElementById('likeOverlay');
+      const po = document.getElementById('passOverlay');
+      if (dx > 30) { lo.style.opacity = Math.min(1, dx / 100); po.style.opacity = 0; }
+      else if (dx < -30) { po.style.opacity = Math.min(1, -dx / 100); lo.style.opacity = 0; }
+      else { lo.style.opacity = 0; po.style.opacity = 0; }
+    });
+    document.addEventListener('mouseup', e => {
+      if (!isDragging) return; isDragging = false;
+      const dx = e.clientX - startX;
+      if (dx > 100) swipeAction('like');
+      else if (dx < -100) swipeAction('pass');
+      else if (card) { card.style.transition = 'transform 0.3s'; card.style.transform = ''; }
+    });
+    // Touch
+    document.addEventListener('touchstart', e => {
+      card = document.getElementById('topCard');
+      if (!card || !card.contains(e.target)) return;
+      isDragging = true; startX = e.touches[0].clientX;
+    }, {passive:true});
+    document.addEventListener('touchmove', e => {
+      if (!isDragging || !card) return;
+      const dx = e.touches[0].clientX - startX;
+      card.style.transform = `translateX(${dx}px) rotate(${dx * 0.05}deg)`;
+    }, {passive:true});
+    document.addEventListener('touchend', e => {
+      if (!isDragging) return; isDragging = false;
+      const dx = e.changedTouches[0].clientX - startX;
+      if (dx > 80) swipeAction('like');
+      else if (dx < -80) swipeAction('pass');
+      else if (card) { card.style.transition = 'transform 0.3s'; card.style.transform = ''; }
+    });
+  })();
+
+  // ── MATCH POPUP ──
+  function closeMatch() { document.getElementById('matchPopup').classList.remove('show'); }
+
+  // ── CHAT ──
+  function openChat(name, avatar) {
+    document.getElementById('chatName').textContent = name;
+    document.getElementById('chatAvatar').textContent = avatar;
+    // Reset messages for simplicity
+    document.getElementById('chat-screen').classList.add('open');
+  }
+  function closeChat() { document.getElementById('chat-screen').classList.remove('open'); }
+
+  function sendMsg() {
+    const input = document.getElementById('msgInput');
+    const text = input.value.trim();
+    if (!text) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'msg-wrap mine';
+    const now = new Date();
+    wrap.innerHTML = `<div class="msg-bubble">${text}</div><div class="msg-time">${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}</div>`;
+    document.getElementById('chatMessages').appendChild(wrap);
+    input.value = '';
+    wrap.scrollIntoView({ behavior: 'smooth' });
+  }
+  // ── ALL WORLD COUNTRIES ──
+  const ALL_COUNTRIES = [
+    "Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria","Azerbaijan",
+    "Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan","Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi",
+    "Cabo Verde","Cambodia","Cameroon","Canada","Central African Republic","Chad","Chile","China","Colombia","Comoros","Congo (Brazzaville)","Congo (DRC)","Costa Rica","Croatia","Cuba","Cyprus","Czech Republic",
+    "Denmark","Djibouti","Dominica","Dominican Republic",
+    "Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini","Ethiopia",
+    "Fiji","Finland","France",
+    "Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea","Guinea-Bissau","Guyana",
+    "Haiti","Honduras","Hungary",
+    "Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy","Ivory Coast",
+    "Jamaica","Japan","Jordan",
+    "Kazakhstan","Kenya","Kiribati","Kosovo","Kuwait","Kyrgyzstan",
+    "Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg",
+    "Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands","Mauritania","Mauritius","Mexico","Micronesia","Moldova","Monaco","Mongolia","Montenegro","Morocco","Mozambique","Myanmar",
+    "Namibia","Nauru","Nepal","Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Korea","North Macedonia","Norway",
+    "Oman",
+    "Pakistan","Palau","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal",
+    "Qatar",
+    "Romania","Russia","Rwanda",
+    "Saint Kitts and Nevis","Saint Lucia","Saint Vincent and the Grenadines","Samoa","San Marino","Sao Tome and Principe","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","Solomon Islands","Somalia","South Africa","South Korea","South Sudan","Spain","Sri Lanka","Sudan","Suriname","Sweden","Switzerland","Syria",
+    "Taiwan","Tajikistan","Tanzania","Thailand","Timor-Leste","Togo","Tonga","Trinidad and Tobago","Tunisia","Turkey","Turkmenistan","Tuvalu",
+    "Uganda","Ukraine","United Arab Emirates","United Kingdom","United States","Uruguay","Uzbekistan",
+    "Vanuatu","Vatican City","Venezuela","Vietnam",
+    "Yemen",
+    "Zambia","Zimbabwe"
+  ];
+
+  // ── CITY DATABASE ──
+  const CITIES = {
+    "Afghanistan": ["Kabul","Kandahar","Herat","Mazar-i-Sharif","Jalalabad","Kunduz","Ghazni","Balkh"],
+    "Albania": ["Tirana","Durrës","Vlorë","Shkodër","Fier","Korçë","Berat","Lushnjë"],
+    "Algeria": ["Algiers","Oran","Constantine","Annaba","Blida","Batna","Sétif","Sidi Bel Abbès","Biskra","Tébessa"],
+    "Andorra": ["Andorra la Vella","Escaldes-Engordany","Encamp","Sant Julià de Lòria"],
+    "Angola": ["Luanda","Huambo","Lobito","Benguela","Kuito","Malanje","Lubango"],
+    "Argentina": ["Buenos Aires","Córdoba","Rosario","Mendoza","Tucumán","La Plata","Mar del Plata","Salta"],
+    "Armenia": ["Yerevan","Gyumri","Vanadzor","Vagharshapat","Hrazdan"],
+    "Australia": ["Sydney","Melbourne","Brisbane","Perth","Adelaide","Gold Coast","Canberra","Hobart","Darwin"],
+    "Austria": ["Vienna","Graz","Linz","Salzburg","Innsbruck","Klagenfurt","Villach"],
+    "Azerbaijan": ["Baku","Ganja","Sumqayıt","Mingəçevir","Nakhchivan","Lankaran"],
+    "Bahamas": ["Nassau","Freeport","West End","Cooper's Town"],
+    "Bahrain": ["Manama","Riffa","Muharraq","Hamad Town","A'ali","Isa Town","Sitra"],
+    "Bangladesh": ["Dhaka","Chittagong","Sylhet","Rajshahi","Khulna","Comilla","Mymensingh","Gazipur","Narayanganj","Rangpur"],
+    "Belarus": ["Minsk","Gomel","Mogilev","Vitebsk","Grodno","Brest"],
+    "Belgium": ["Brussels","Antwerp","Ghent","Charleroi","Liège","Bruges","Namur","Leuven"],
+    "Benin": ["Cotonou","Abomey-Calavi","Porto-Novo","Parakou","Bohicon"],
+    "Bolivia": ["La Paz","Santa Cruz","Cochabamba","Sucre","Oruro","Potosí","Tarija"],
+    "Bosnia and Herzegovina": ["Sarajevo","Banja Luka","Mostar","Tuzla","Zenica"],
+    "Brazil": ["São Paulo","Rio de Janeiro","Brasília","Salvador","Fortaleza","Belo Horizonte","Manaus","Curitiba","Recife","Porto Alegre"],
+    "Brunei": ["Bandar Seri Begawan","Kuala Belait","Seria","Tutong","Bangar"],
+    "Bulgaria": ["Sofia","Plovdiv","Varna","Burgas","Ruse","Stara Zagora"],
+    "Burkina Faso": ["Ouagadougou","Bobo-Dioulasso","Koudougou","Banfora","Ouahigouya"],
+    "Burundi": ["Bujumbura","Gitega","Muyinga","Ngozi","Rumonge"],
+    "Cambodia": ["Phnom Penh","Siem Reap","Battambang","Sihanoukville","Kampong Cham"],
+    "Cameroon": ["Yaoundé","Douala","Garoua","Bamenda","Maroua","Bafoussam"],
+    "Canada": ["Toronto","Montreal","Vancouver","Calgary","Edmonton","Ottawa","Winnipeg","Quebec City","Hamilton","Mississauga","Brampton","Surrey"],
+    "Chad": ["N'Djamena","Moundou","Sarh","Abéché","Kélo","Koumra"],
+    "Chile": ["Santiago","Valparaíso","Concepción","La Serena","Antofagasta","Temuco","Arica","Iquique"],
+    "China": ["Beijing","Shanghai","Guangzhou","Shenzhen","Chengdu","Chongqing","Xi'an","Wuhan","Hangzhou","Nanjing","Tianjin","Harbin"],
+    "Colombia": ["Bogotá","Medellín","Cali","Barranquilla","Cartagena","Cúcuta","Bucaramanga","Pereira"],
+    "Comoros": ["Moroni","Mutsamudu","Fomboni","Domoni"],
+    "Congo (DRC)": ["Kinshasa","Lubumbashi","Mbuji-Mayi","Kananga","Kisangani","Bukavu","Goma"],
+    "Costa Rica": ["San José","Alajuela","Cartago","Heredia","Liberia","Limón"],
+    "Croatia": ["Zagreb","Split","Rijeka","Osijek","Zadar","Slavonski Brod"],
+    "Cuba": ["Havana","Santiago de Cuba","Camagüey","Holguín","Guantánamo","Santa Clara"],
+    "Cyprus": ["Nicosia","Limassol","Larnaca","Paphos","Famagusta"],
+    "Czech Republic": ["Prague","Brno","Ostrava","Plzeň","Liberec","Olomouc"],
+    "Denmark": ["Copenhagen","Aarhus","Odense","Aalborg","Frederiksberg","Esbjerg"],
+    "Djibouti": ["Djibouti City","Ali Sabieh","Dikhil","Tadjourah","Obock"],
+    "Dominican Republic": ["Santo Domingo","Santiago","La Romana","San Pedro de Macorís","Puerto Plata"],
+    "Ecuador": ["Quito","Guayaquil","Cuenca","Santo Domingo","Machala","Durán","Manta"],
+    "Egypt": ["Cairo","Alexandria","Giza","Shubra El-Kheima","Port Said","Suez","Luxor","Aswan","Mansoura","Tanta","Asyut","Zagazig","Ismailia","Faiyum","Minya"],
+    "Ethiopia": ["Addis Ababa","Dire Dawa","Mekelle","Gondar","Hawassa","Bahir Dar","Dessie","Jimma"],
+    "Finland": ["Helsinki","Espoo","Tampere","Vantaa","Oulu","Turku","Jyväskylä"],
+    "France": ["Paris","Marseille","Lyon","Toulouse","Nice","Nantes","Strasbourg","Montpellier","Bordeaux","Lille","Rennes"],
+    "Gambia": ["Banjul","Serekunda","Brikama","Bakau","Farafenni","Lamin"],
+    "Georgia": ["Tbilisi","Kutaisi","Batumi","Rustavi","Zugdidi","Gori"],
+    "Germany": ["Berlin","Hamburg","Munich","Cologne","Frankfurt","Stuttgart","Düsseldorf","Leipzig","Dortmund","Essen","Bremen","Dresden"],
+    "Ghana": ["Accra","Kumasi","Tamale","Sekondi-Takoradi","Ashaiman","Tema","Cape Coast"],
+    "Greece": ["Athens","Thessaloniki","Patras","Heraklion","Larissa","Volos","Ioannina"],
+    "Guatemala": ["Guatemala City","Quetzaltenango","Escuintla","Villa Nueva","Mixco","Huehuetenango"],
+    "Guinea": ["Conakry","Nzérékoré","Kindia","Kankan","Labé","Kissidougou"],
+    "Guinea-Bissau": ["Bissau","Bafatá","Gabu","Bissorã","Cacheu"],
+    "Haiti": ["Port-au-Prince","Cap-Haïtien","Gonaïves","Saint-Marc","Jacmel"],
+    "Honduras": ["Tegucigalpa","San Pedro Sula","Choloma","La Ceiba","El Progreso"],
+    "Hungary": ["Budapest","Debrecen","Miskolc","Szeged","Pécs","Győr","Nyíregyháza"],
+    "India": ["Mumbai","Delhi","Bangalore","Hyderabad","Chennai","Kolkata","Pune","Ahmedabad","Jaipur","Lucknow","Surat","Kanpur","Nagpur","Visakhapatnam","Indore","Patna","Bhopal","Ludhiana","Agra","Nashik"],
+    "Indonesia": ["Jakarta","Surabaya","Bandung","Medan","Bekasi","Tangerang","Depok","Semarang","Palembang","Makassar","Batam","Pekanbaru","Bogor","Bandar Lampung","Malang","Padang","Denpasar"],
+    "Iran": ["Tehran","Mashhad","Isfahan","Karaj","Shiraz","Tabriz","Qom","Ahvaz","Kermanshah","Rasht","Zahedan","Hamadan"],
+    "Iraq": ["Baghdad","Basra","Mosul","Erbil","Najaf","Karbala","Kirkuk","Sulaymaniyah","Fallujah","Ramadi","Nasiriyah"],
+    "Ireland": ["Dublin","Cork","Limerick","Galway","Waterford","Drogheda","Dundalk"],
+    "Israel": ["Jerusalem","Tel Aviv","Haifa","Rishon LeZion","Petah Tikva","Ashdod","Netanya","Beer Sheva"],
+    "Italy": ["Rome","Milan","Naples","Turin","Palermo","Genoa","Bologna","Florence","Bari","Catania","Venice","Verona"],
+    "Ivory Coast": ["Abidjan","Yamoussoukro","Bouaké","Daloa","San-Pédro","Korhogo"],
+    "Jamaica": ["Kingston","Montego Bay","Spanish Town","Portmore","May Pen"],
+    "Japan": ["Tokyo","Yokohama","Osaka","Nagoya","Sapporo","Fukuoka","Kobe","Kyoto","Kawasaki","Saitama","Hiroshima","Sendai"],
+    "Jordan": ["Amman","Zarqa","Irbid","Russeifa","Wadi as-Seer","Aqaba","Madaba","Jerash","Ajloun","Salt"],
+    "Kazakhstan": ["Almaty","Nur-Sultan","Shymkent","Karaganda","Aktobe","Taraz","Pavlodar","Ust-Kamenogorsk"],
+    "Kenya": ["Nairobi","Mombasa","Kisumu","Nakuru","Eldoret","Thika","Malindi","Kitale"],
+    "Kosovo": ["Pristina","Prizren","Peja","Mitrovica","Gjilan","Ferizaj"],
+    "Kuwait": ["Kuwait City","Hawalli","Salmiya","Jahra","Farwaniya","Fahaheel","Ahmadi"],
+    "Kyrgyzstan": ["Bishkek","Osh","Jalal-Abad","Karakol","Tokmok","Kant"],
+    "Lebanon": ["Beirut","Tripoli","Sidon","Tyre","Nabatieh","Jounieh","Zahlé","Baalbek"],
+    "Libya": ["Tripoli","Benghazi","Misrata","Tarhuna","Zawiya","Ajdabiya","Derna","Zintan"],
+    "Malaysia": ["Kuala Lumpur","George Town","Ipoh","Shah Alam","Petaling Jaya","Johor Bahru","Subang Jaya","Kota Kinabalu","Kuching","Ampang Jaya","Selayang","Klang"],
+    "Maldives": ["Malé","Addu City","Fuvahmulah","Kulhudhuffushi","Thinadhoo"],
+    "Mali": ["Bamako","Sikasso","Mopti","Koutiala","Ségou","Kayes","Gao"],
+    "Mauritania": ["Nouakchott","Nouadhibou","Kiffa","Kaédi","Rosso","Zouérat","Atar"],
+    "Mauritius": ["Port Louis","Beau Bassin-Rose Hill","Vacoas-Phoenix","Curepipe","Quatre Bornes"],
+    "Mexico": ["Mexico City","Guadalajara","Monterrey","Puebla","Tijuana","León","Juárez","Zapopan","Mérida","Cancún","San Luis Potosí","Aguascalientes"],
+    "Mongolia": ["Ulaanbaatar","Erdenet","Darkhan","Choibalsan","Mörön"],
+    "Morocco": ["Casablanca","Rabat","Fez","Marrakech","Agadir","Tangier","Meknes","Oujda","Kenitra","Tetouan","Safi","El Jadida","Beni Mellal"],
+    "Mozambique": ["Maputo","Matola","Nampula","Beira","Chimoio","Nacala","Quelimane","Tete"],
+    "Myanmar": ["Naypyidaw","Yangon","Mandalay","Mawlamyine","Bago","Pathein","Monywa"],
+    "Nepal": ["Kathmandu","Pokhara","Lalitpur","Biratnagar","Birgunj","Bharatpur","Dharan"],
+    "Netherlands": ["Amsterdam","Rotterdam","The Hague","Utrecht","Eindhoven","Tilburg","Groningen","Almere","Breda","Nijmegen"],
+    "New Zealand": ["Auckland","Wellington","Christchurch","Hamilton","Tauranga","Dunedin","Palmerston North"],
+    "Niger": ["Niamey","Zinder","Maradi","Agadez","Tahoua","Dosso","Diffa"],
+    "Nigeria": ["Lagos","Kano","Ibadan","Kaduna","Port Harcourt","Abuja","Benin City","Maiduguri","Zaria","Aba","Jos","Ilorin","Oyo","Enugu","Abeokuta"],
+    "North Macedonia": ["Skopje","Bitola","Kumanovo","Prilep","Tetovo","Veles"],
+    "Norway": ["Oslo","Bergen","Trondheim","Stavanger","Drammen","Fredrikstad","Kristiansand"],
+    "Oman": ["Muscat","Salalah","Sohar","Nizwa","Sur","Ibri","Buraimi","Rustaq","Khasab"],
+    "Pakistan": ["Karachi","Lahore","Faisalabad","Rawalpindi","Islamabad","Gujranwala","Peshawar","Multan","Hyderabad","Quetta","Sialkot","Bahawalpur","Sargodha","Jhang","Sheikhupura","Sukkur"],
+    "Palestine": ["Gaza","Hebron","Nablus","Ramallah","Jenin","Tulkarm","Qalqilya","Jericho","Bethlehem","Khan Yunis","Rafah"],
+    "Peru": ["Lima","Arequipa","Trujillo","Chiclayo","Piura","Iquitos","Cusco","Chimbote","Huancayo"],
+    "Philippines": ["Manila","Quezon City","Davao","Caloocan","Zamboanga","Cebu City","Antipolo","Pasig","Cagayan de Oro","Parañaque","Dasmariñas"],
+    "Poland": ["Warsaw","Kraków","Łódź","Wrocław","Poznań","Gdańsk","Szczecin","Bydgoszcz","Lublin","Katowice"],
+    "Portugal": ["Lisbon","Porto","Braga","Amadora","Setúbal","Coimbra","Funchal","Almada"],
+    "Qatar": ["Doha","Al Rayyan","Al Wakrah","Al Khor","Madinat ash Shamal","Dukhan","Umm Salal Muhammad"],
+    "Romania": ["Bucharest","Cluj-Napoca","Timișoara","Iași","Constanța","Craiova","Brașov","Galați","Ploiești"],
+    "Russia": ["Moscow","Saint Petersburg","Novosibirsk","Yekaterinburg","Kazan","Nizhny Novgorod","Chelyabinsk","Samara","Ufa","Rostov-on-Don","Krasnoyarsk","Perm","Voronezh","Volgograd","Omsk"],
+    "Rwanda": ["Kigali","Butare","Gitarama","Ruhengeri","Gisenyi","Byumba"],
+    "Saudi Arabia": ["Riyadh","Jeddah","Mecca","Medina","Dammam","Taif","Tabuk","Buraidah","Khobar","Jubail","Abha","Najran","Yanbu","Hail","Khamis Mushait","Hofuf"],
+    "Senegal": ["Dakar","Touba","Thiès","Rufisque","Kaolack","Ziguinchor","Saint-Louis","Mbour"],
+    "Serbia": ["Belgrade","Novi Sad","Niš","Kragujevac","Subotica","Zrenjanin","Pančevo"],
+    "Sierra Leone": ["Freetown","Bo","Kenema","Makeni","Koidu","Lunsar"],
+    "Singapore": ["Singapore","Jurong East","Woodlands","Tampines","Sengkang","Punggol","Hougang"],
+    "Somalia": ["Mogadishu","Hargeisa","Kismayo","Bosaso","Merca","Baidoa","Berbera","Garowe"],
+    "South Africa": ["Johannesburg","Cape Town","Durban","Pretoria","Port Elizabeth","Bloemfontein","East London","Nelspruit","Kimberley","Polokwane"],
+    "South Korea": ["Seoul","Busan","Incheon","Daegu","Daejeon","Gwangju","Suwon","Ulsan","Goyang","Changwon"],
+    "Spain": ["Madrid","Barcelona","Valencia","Seville","Zaragoza","Málaga","Murcia","Palma","Las Palmas","Bilbao","Alicante","Córdoba"],
+    "Sri Lanka": ["Colombo","Kandy","Galle","Jaffna","Negombo","Trincomalee","Batticaloa","Anuradhapura"],
+    "Sudan": ["Khartoum","Omdurman","Port Sudan","Kassala","El Obeid","Wad Madani","Atbara","El Fasher"],
+    "Sweden": ["Stockholm","Gothenburg","Malmö","Uppsala","Västerås","Örebro","Linköping","Helsingborg","Jönköping"],
+    "Switzerland": ["Zurich","Geneva","Basel","Bern","Lausanne","Winterthur","Lucerne","St. Gallen"],
+    "Syria": ["Damascus","Aleppo","Homs","Latakia","Hama","Deir ez-Zor","Raqqa","Idlib","Tartus","Qamishli"],
+    "Taiwan": ["Taipei","New Taipei","Kaohsiung","Taichung","Tainan","Hsinchu","Keelung","Chiayi"],
+    "Tajikistan": ["Dushanbe","Khujand","Kulob","Qurghonteppa","Istaravshan","Vahdat"],
+    "Tanzania": ["Dar es Salaam","Dodoma","Mwanza","Arusha","Mbeya","Morogoro","Tanga","Zanzibar City","Kigoma"],
+    "Thailand": ["Bangkok","Nonthaburi","Pak Kret","Hat Yai","Udon Thani","Chiang Mai","Pattaya","Khon Kaen","Surat Thani","Ubon Ratchathani"],
+    "Togo": ["Lomé","Sokodé","Kara","Kpalimé","Atakpamé","Bassar"],
+    "Trinidad and Tobago": ["Port of Spain","San Fernando","Arima","Chaguanas","Scarborough"],
+    "Tunisia": ["Tunis","Sfax","Sousse","Kairouan","Bizerte","Gabès","Aryanah","Gafsa","Monastir","Ben Arous"],
+    "Turkey": ["Istanbul","Ankara","Izmir","Bursa","Adana","Gaziantep","Konya","Antalya","Kayseri","Mersin","Eskişehir","Diyarbakır","Samsun","Denizli","Adapazarı"],
+    "Turkmenistan": ["Ashgabat","Turkmenabat","Dasoguz","Mary","Balkanabat"],
+    "Uganda": ["Kampala","Gulu","Lira","Mbarara","Jinja","Bwizibwera","Mbale"],
+    "Ukraine": ["Kyiv","Kharkiv","Dnipro","Donetsk","Odessa","Zaporizhzhia","Lviv","Kryvyi Rih","Mykolaiv","Mariupol"],
+    "United Arab Emirates": ["Dubai","Abu Dhabi","Sharjah","Al Ain","Ajman","Ras Al Khaimah","Fujairah","Umm Al Quwain","Khor Fakkan","Kalba"],
+    "United Kingdom": ["London","Birmingham","Manchester","Glasgow","Liverpool","Leeds","Sheffield","Edinburgh","Bristol","Cardiff","Leicester","Coventry","Nottingham","Bradford","Belfast"],
+    "United States": ["New York","Los Angeles","Chicago","Houston","Phoenix","Philadelphia","San Antonio","San Diego","Dallas","San Jose","Austin","Jacksonville","Fort Worth","Columbus","Charlotte","Indianapolis","San Francisco","Seattle","Denver","Nashville","Oklahoma City","El Paso","Washington DC","Las Vegas","Louisville","Portland","Memphis","Boston","Detroit","Atlanta","Minneapolis","Miami","Tampa","New Orleans","Dearborn","Paterson"],
+    "Uzbekistan": ["Tashkent","Samarkand","Namangan","Andijan","Nukus","Bukhara","Fergana","Karshi"],
+    "Venezuela": ["Caracas","Maracaibo","Valencia","Barquisimeto","Maracay","Ciudad Guayana","Barcelona","Maturín"],
+    "Vietnam": ["Ho Chi Minh City","Hanoi","Da Nang","Haiphong","Biên Hòa","Cần Thơ","Rạch Giá","Huế","Nha Trang","Buôn Ma Thuột"],
+    "Yemen": ["Sanaa","Aden","Taiz","Hudaydah","Ibb","Dhamar","Mukalla","Hajjah","Saada","Marib","Zinjibar"],
+    "Zambia": ["Lusaka","Kitwe","Ndola","Kabwe","Chingola","Mufulira","Livingstone"],
+    "Zimbabwe": ["Harare","Bulawayo","Chitungwiza","Mutare","Gweru","Kwekwe","Kadoma"]
+  };
+
+  // Populate all country dropdowns
+  function populateCountryDropdowns() {
+    const selects = ['inp-origin', 'inp-location', 'countryFilterSelect'];
+    selects.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const isFilter = id === 'countryFilterSelect';
+      el.innerHTML = isFilter
+        ? '<option value="All">🌍 All Countries</option>'
+        : '<option value="">Select country…</option>';
+      ALL_COUNTRIES.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c; opt.textContent = c;
+        el.appendChild(opt);
+      });
+    });
+  }
+  populateCountryDropdowns();
+
+  // Populate city dropdown based on selected country
+  function populateCities(countrySelectId, citySelectId) {
+    const country = document.getElementById(countrySelectId).value;
+    const cityEl = document.getElementById(citySelectId);
+    const cities = CITIES[country] || [];
+    if (!cities.length) {
+      cityEl.innerHTML = '<option value="">No cities listed</option>';
+      return;
+    }
+    cityEl.innerHTML = '<option value="">Select city…</option>';
+    cities.forEach(city => {
+      const opt = document.createElement('option');
+      opt.value = city; opt.textContent = city;
+      cityEl.appendChild(opt);
+    });
+  }
+
+  // ── DISCOVER FILTER ──
+  function filterBySelect() {
+    const country = document.getElementById('countryFilterSelect').value;
+    const city = document.getElementById('cityFilterSelect').value;
+
+    // Populate city filter when country changes
+    const cityFilterEl = document.getElementById('cityFilterSelect');
+    if (country !== 'All') {
+      const cities = CITIES[country] || [];
+      cityFilterEl.innerHTML = '<option value="All">All Cities</option>';
+      cities.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c; opt.textContent = c;
+        cityFilterEl.appendChild(opt);
+      });
+    } else {
+      cityFilterEl.innerHTML = '<option value="All">All Cities</option>';
+    }
+
+    const stack = document.getElementById('cardStack');
+    stack.querySelectorAll('.profile-card').forEach(card => {
+      const cc = card.getAttribute('data-country') || '';
+      const ci = card.getAttribute('data-city') || '';
+      const countryMatch = country === 'All' || cc === country;
+      const cityMatch = city === 'All' || ci === city;
+      card.style.display = (countryMatch && cityMatch) ? '' : 'none';
+    });
+  }
+
+  function filterCountry(btn, country) {
+    document.querySelectorAll('.cfilter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    filterBySelect();
+  }
+
+  function handleMsgKey(e) { if (e.key === 'Enter') sendMsg(); }
+
+  // ── PAYWALL ──
+  let isPremium = false;
+
+  function openPaywall() {
+    if (isPremium) return;
+    document.getElementById('paywallModal').classList.add('show');
+  }
+  function closePaywall() {
+    document.getElementById('paywallModal').classList.remove('show');
+  }
+
+  function processPayment() {
+    const name = document.getElementById('pay-name').value.trim();
+    const card = document.getElementById('pay-card').value.trim();
+    const expiry = document.getElementById('pay-expiry').value.trim();
+    const cvv = document.getElementById('pay-cvv').value.trim();
+    const err = document.getElementById('pay-error');
+
+    if (!name || card.replace(/\s/g,'').length < 16 || expiry.length < 5 || cvv.length < 3) {
+      err.textContent = 'Please fill in all card details correctly.';
+      err.style.display = 'block';
+      return;
+    }
+    err.style.display = 'none';
+
+    const btn = document.getElementById('pay-btn');
+    btn.textContent = 'Processing…';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      closePaywall();
+      isPremium = true;
+      // Show success screen
+      document.getElementById('paywallSuccess').classList.add('show');
+      // Update profile banner to reflect premium status
+      const banner = document.getElementById('premiumBanner');
+      banner.style.background = 'linear-gradient(135deg, var(--teal-dark), var(--teal))';
+      banner.onclick = null;
+      banner.style.cursor = 'default';
+      document.getElementById('premiumBannerIcon').textContent = '✅';
+      document.getElementById('premiumBannerTitle').textContent = 'Noor Gold — Active';
+      document.getElementById('premiumBannerSub').textContent = 'Unlimited features unlocked · $5/month active';
+      document.getElementById('premiumBannerArrow').textContent = '';
+      btn.textContent = 'Pay $5.00';
+      btn.disabled = false;
+    }, 1800);
+  }
+
+  function closeSuccess() {
+    document.getElementById('paywallSuccess').classList.remove('show');
+  }
+
+  // Format card number with spaces
+  document.addEventListener('DOMContentLoaded', () => {
+    const cardInput = document.getElementById('pay-card');
+    if (cardInput) {
+      cardInput.addEventListener('input', e => {
+        let v = e.target.value.replace(/\D/g,'').substring(0,16);
+        e.target.value = v.replace(/(.{4})/g,'$1 ').trim();
+      });
+      document.getElementById('pay-expiry').addEventListener('input', e => {
+        let v = e.target.value.replace(/\D/g,'').substring(0,4);
+        if (v.length >= 3) v = v.slice(0,2) + '/' + v.slice(2);
+        e.target.value = v;
+      });
+      document.getElementById('pay-cvv').addEventListener('input', e => {
+        e.target.value = e.target.value.replace(/\D/g,'').substring(0,4);
+      });
+    }
+  });
+</script>
+
+<!-- PAYWALL MODAL -->
+<div class="paywall-overlay" id="paywallModal">
+  <div class="paywall-sheet">
+    <button class="paywall-close" onclick="closePaywall()">✕</button>
+
+    <!-- Header -->
+    <div class="paywall-header">
+      <div class="paywall-star">⭐</div>
+      <div class="paywall-title">Noor Gold</div>
+      <div class="paywall-price-tag">Monthly subscription — <strong>$5/month</strong></div>
+    </div>
+
+    <!-- Features -->
+    <div class="paywall-features">
+      <div class="pf-item"><span class="pf-check">✓</span> Unlimited likes & matches</div>
+      <div class="pf-item"><span class="pf-check">✓</span> See who liked your profile</div>
+      <div class="pf-item"><span class="pf-check">✓</span> Super likes & priority visibility</div>
+      <div class="pf-item"><span class="pf-check">✓</span> Advanced filters (sect, location, practice)</div>
+      <div class="pf-item"><span class="pf-check">✓</span> Read receipts in messages</div>
+      <div class="pf-item"><span class="pf-check">✓</span> Verified profile badge</div>
+    </div>
+
+    <div class="paywall-divider"></div>
+
+    <!-- Payment Form -->
+    <div class="paywall-form">
+      <div class="pay-label">Cardholder Name</div>
+      <input class="pay-input" id="pay-name" type="text" placeholder="Full name on card">
+
+      <div class="pay-label">Card Number</div>
+      <input class="pay-input" id="pay-card" type="text" placeholder="1234 5678 9012 3456" maxlength="19">
+
+      <div class="pay-row">
+        <div style="flex:1">
+          <div class="pay-label">Expiry</div>
+          <input class="pay-input" id="pay-expiry" type="text" placeholder="MM/YY" maxlength="5">
+        </div>
+        <div style="flex:1">
+          <div class="pay-label">CVV</div>
+          <input class="pay-input" id="pay-cvv" type="text" placeholder="123" maxlength="4">
+        </div>
+      </div>
+
+      <div class="pay-error" id="pay-error"></div>
+
+      <button class="pay-btn" id="pay-btn" onclick="processPayment()">Subscribe · $5 / month</button>
+      <div class="pay-secure">🔒 Secure payment · Cancel anytime · Billed monthly</div>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="paywallSuccess">
+  <div class="success-content">
+    <div class="success-icon">🌟</div>
+    <div class="success-title">Welcome to Noor Gold!</div>
+    <div class="success-sub">JazakAllahu Khayran. All features are now unlocked. May Allah make it easy for you.</div>
+    <button class="success-btn" onclick="closeSuccess()">Start Discovering ☽</button>
+  </div>
+</div>
+
+<style>
+  /* ── PAYWALL ── */
+  .paywall-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 400;
+    background: rgba(10,35,35,0.75);
+    backdrop-filter: blur(4px);
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .paywall-overlay.show { display: flex; }
+
+  .paywall-sheet {
+    background: var(--warm-white);
+    border-radius: 28px 28px 0 0;
+    width: 100%;
+    max-width: 500px;
+    max-height: 92vh;
+    overflow-y: auto;
+    padding: 28px 28px 40px;
+    position: relative;
+    animation: slideUp 0.35s cubic-bezier(.4,0,.2,1) both;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  .paywall-close {
+    position: absolute;
+    top: 20px; right: 20px;
+    background: rgba(0,0,0,0.07);
+    border: none; border-radius: 50%;
+    width: 34px; height: 34px;
+    font-size: 14px; cursor: pointer;
+    color: var(--text-mid);
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .paywall-header { text-align: center; margin-bottom: 24px; }
+  .paywall-star {
+    font-size: 48px;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 4px 8px rgba(201,168,76,0.5));
+    animation: starPulse 2s ease infinite;
+  }
+  @keyframes starPulse {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
+  .paywall-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 600;
+    color: var(--teal-dark);
+    letter-spacing: 2px;
+  }
+  .paywall-price-tag {
+    font-size: 14px;
+    color: var(--text-mid);
+    margin-top: 6px;
+  }
+  .paywall-price-tag strong { color: var(--teal); }
+
+  .paywall-features {
+    background: white;
+    border-radius: 18px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .pf-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    font-size: 14px;
+    color: var(--text-dark);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+  .pf-item:last-child { border-bottom: none; }
+  .pf-check {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--teal), var(--teal-light));
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .paywall-divider {
+    height: 1px;
+    background: rgba(0,0,0,0.08);
+    margin: 0 0 20px;
+  }
+
+  .paywall-form {}
+  .pay-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 7px;
+    margin-top: 14px;
+  }
+  .pay-input {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid #e8e0d8;
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    background: white;
+    color: var(--text-dark);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .pay-input:focus { border-color: var(--teal); }
+  .pay-row { display: flex; gap: 12px; }
+
+  .pay-error {
+    display: none;
+    background: rgba(201,100,100,0.1);
+    border: 1px solid rgba(201,100,100,0.3);
+    color: #b04040;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    margin-top: 12px;
+  }
+
+  .pay-btn {
+    width: 100%;
+    margin-top: 20px;
+    padding: 16px;
+    border-radius: 50px;
+    border: none;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: var(--teal-dark);
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(201,168,76,0.45);
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+  .pay-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(201,168,76,0.55); }
+  .pay-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+  .pay-secure {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-light);
+    margin-top: 12px;
+  }
+
+  /* ── SUCCESS ── */
+  .success-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 500;
+    background: linear-gradient(160deg, var(--teal-dark), var(--teal));
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 40px;
+  }
+  .success-overlay.show { display: flex; animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+  .success-icon {
+    font-size: 80px;
+    margin-bottom: 24px;
+    animation: bounceIn 0.6s cubic-bezier(.4,0,.2,1) both 0.1s;
+  }
+  @keyframes bounceIn {
+    0% { transform: scale(0); opacity:0; }
+    70% { transform: scale(1.15); }
+    100% { transform: scale(1); opacity:1; }
+  }
+  .success-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 40px;
+    font-weight: 300;
+    color: var(--gold-light);
+    margin-bottom: 14px;
+    letter-spacing: 1px;
+  }
+  .success-sub {
+    font-size: 15px;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.7;
+    max-width: 320px;
+    margin: 0 auto 40px;
+  }
+  .success-btn {
+    padding: 16px 48px;
+    border-radius: 50px;
+    border: none;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: var(--teal-dark);
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 8px 28px rgba(201,168,76,0.4);
+    transition: transform 0.2s;
+  }
+  .success-btn:hover { transform: translateY(-2px); }
+</style>
+</body>
+</html>
