@@ -1,0 +1,30 @@
+{
+  "name": "Noor — Muslim Matrimony",
+  "short_name": "Noor",
+  "description": "Find your spouse in a halal, respectful environment. Noor connects Muslims worldwide for meaningful marriage.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f4a4a",
+  "theme_color": "#1a6b6b",
+  "lang": "en",
+  "scope": "./",
+  "categories": ["lifestyle", "social"],
+  "icons": [
+    {
+      "src": "./icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Discover",
+      "short_name": "Discover",
+      "description": "Browse potential matches",
+      "url": "./index.html",
+      "icons": [{ "src": "./icon.png", "sizes": "512x512" }]
+    }
+  ]
+}
