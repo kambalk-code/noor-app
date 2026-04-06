@@ -7,6 +7,47 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1a6b6b">
 <meta name="mobile-web-app-capable" content="yes">
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAGu0--gN6rZ5HTp_IDOOoP39w2dcNKAgE",
+    authDomain: "noor-matrimony-28c6d.firebaseapp.com",
+    projectId: "noor-matrimony-28c6d",
+    storageBucket: "noor-matrimony-28c6d.firebasestorage.app",
+    messagingSenderId: "526970927636",
+    appId: "1:526970927636:web:7bcfed1ded998089ea8501",
+    measurementId: "G-Z10PJ5GTSR"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // Make auth functions available globally
+  window.firebaseAuth = auth;
+  window.firebaseDb = db;
+  window.fbCreateUser = (email, password) => createUserWithEmailAndPassword(auth, email, password);
+  window.fbSignIn = (email, password) => signInWithEmailAndPassword(auth, email, password);
+  window.fbSignOut = () => signOut(auth);
+  window.fbSetDoc = (path, data) => setDoc(doc(db, path), data, { merge: true });
+  window.fbGetDoc = (path) => getDoc(doc(db, path));
+  window.onAuthStateChanged = (cb) => onAuthStateChanged(auth, cb);
+
+  // Check auth state on load
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      window.currentUser = user;
+      if (document.getElementById('splash').classList.contains('active')) {
+        showScreen('app');
+      }
+    }
+  });
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -863,8 +904,8 @@
     <div class="logo-mark">N</div>
     <div class="app-name">Noor</div>
     <div class="app-tagline">Find your other half</div>
-    <button class="splash-btn btn-primary-splash" onclick="showScreen('app')">Create Account</button>
-    <button class="splash-btn btn-outline-splash" onclick="showScreen('app')">Sign In</button>
+    <button class="splash-btn btn-primary-splash" onclick="showAuthModal('signup')">Create Account</button>
+    <button class="splash-btn btn-outline-splash" onclick="showAuthModal('login')">Sign In</button>
   </div>
 </div>
 
@@ -1324,6 +1365,44 @@
   <button class="btn-send-msg" onclick="closeMatch(); openChat('Fatima', '👩‍🦱')">Send a Message</button>
   <button class="btn-keep-swiping" onclick="closeMatch()">Keep Discovering</button>
 </div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAGu0--gN6rZ5HTp_IDOOoP39w2dcNKAgE",
+    authDomain: "noor-matrimony-28c6d.firebaseapp.com",
+    projectId: "noor-matrimony-28c6d",
+    storageBucket: "noor-matrimony-28c6d.firebasestorage.app",
+    messagingSenderId: "526970927636",
+    appId: "1:526970927636:web:e25decc20ce1616eea8501"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // Make auth functions global
+  window.firebaseAuth = auth;
+  window.firebaseDb = db;
+  window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+  window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+  window.signOut = signOut;
+  window.doc = doc;
+  window.setDoc = setDoc;
+  window.getDoc = getDoc;
+
+  // Check auth state on load
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      showScreen('app');
+    } else {
+      showScreen('splash');
+    }
+  });
+</script>
 
 <script>
   // ── SCREEN MANAGEMENT ──
@@ -2059,6 +2138,136 @@
     transition: transform 0.2s;
   }
   .success-btn:hover { transform: translateY(-2px); }
+
+  /* AUTH MODAL */
+  .auth-overlay {
+    display: none; position: fixed; inset: 0; z-index: 500;
+    background: rgba(10,40,40,0.85); backdrop-filter: blur(4px);
+    align-items: flex-end; justify-content: center;
+  }
+  .auth-overlay.show { display: flex; }
+  .auth-sheet {
+    background: var(--warm-white); border-radius: 28px 28px 0 0;
+    width: 100%; max-width: 500px; padding: 32px 28px 48px;
+    animation: slideUp 0.35s cubic-bezier(.4,0,.2,1) both;
+  }
+  .auth-title {
+    font-family: 'Cormorant Garamond', serif; font-size: 32px;
+    font-weight: 400; color: var(--teal-dark); text-align: center;
+    margin-bottom: 6px;
+  }
+  .auth-sub { text-align: center; font-size: 13px; color: var(--text-light); margin-bottom: 24px; }
+  .auth-error {
+    background: rgba(201,100,100,0.1); border: 1px solid rgba(201,100,100,0.3);
+    color: #b04040; border-radius: 10px; padding: 10px 14px;
+    font-size: 13px; margin-bottom: 12px; display: none;
+  }
+  .auth-switch { text-align: center; margin-top: 16px; font-size: 13px; color: var(--text-light); }
+  .auth-switch span { color: var(--teal); font-weight: 700; cursor: pointer; }
 </style>
+
+<!-- AUTH MODAL -->
+<div class="auth-overlay" id="authModal">
+  <div class="auth-sheet">
+    <div class="auth-title" id="authTitle">Create Account</div>
+    <div class="auth-sub" id="authSub">Join thousands of Muslims finding their spouse</div>
+    <div class="auth-error" id="authError"></div>
+    <div class="form-group" id="authNameGroup">
+      <label class="form-label">First Name</label>
+      <input class="form-input" type="text" id="authName" placeholder="Your first name">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" type="email" id="authEmail" placeholder="your@email.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" type="password" id="authPassword" placeholder="Min 6 characters">
+    </div>
+    <button class="btn-next" id="authSubmitBtn" onclick="submitAuth()">Create Account</button>
+    <div class="auth-switch" id="authSwitch">
+      Already have an account? <span onclick="toggleAuthMode()">Sign In</span>
+    </div>
+    <button onclick="closeAuthModal()" style="display:block;margin:12px auto 0;background:none;border:none;color:var(--text-light);font-size:13px;cursor:pointer;">Cancel</button>
+  </div>
+</div>
+
+<script>
+  let authMode = 'signup';
+
+  function showAuthModal(mode) {
+    authMode = mode;
+    document.getElementById('authModal').classList.add('show');
+    document.getElementById('authError').style.display = 'none';
+    updateAuthUI();
+  }
+
+  function closeAuthModal() {
+    document.getElementById('authModal').classList.remove('show');
+  }
+
+  function toggleAuthMode() {
+    authMode = authMode === 'signup' ? 'login' : 'signup';
+    updateAuthUI();
+  }
+
+  function updateAuthUI() {
+    const isSignup = authMode === 'signup';
+    document.getElementById('authTitle').textContent = isSignup ? 'Create Account' : 'Welcome Back';
+    document.getElementById('authSub').textContent = isSignup ? 'Join thousands of Muslims finding their spouse' : 'Sign in to continue your journey';
+    document.getElementById('authNameGroup').style.display = isSignup ? 'block' : 'none';
+    document.getElementById('authSubmitBtn').textContent = isSignup ? 'Create Account' : 'Sign In';
+    document.getElementById('authSwitch').innerHTML = isSignup
+      ? 'Already have an account? <span onclick="toggleAuthMode()">Sign In</span>'
+      : 'New to Noor? <span onclick="toggleAuthMode()">Create Account</span>';
+  }
+
+  async function submitAuth() {
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+    const name = document.getElementById('authName').value.trim();
+    const errEl = document.getElementById('authError');
+    const btn = document.getElementById('authSubmitBtn');
+
+    if (!email || !password) {
+      errEl.textContent = 'Please enter your email and password.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    btn.textContent = 'Please wait...';
+    btn.disabled = true;
+    errEl.style.display = 'none';
+
+    try {
+      if (authMode === 'signup') {
+        if (!name) { throw { message: 'Please enter your first name.' }; }
+        const cred = await window.createUserWithEmailAndPassword(window.firebaseAuth, email, password);
+        // Save basic profile to Firestore
+        await window.setDoc(window.doc(window.firebaseDb, 'users', cred.user.uid), {
+          name: name, email: email, createdAt: new Date().toISOString(), uid: cred.user.uid
+        });
+        closeAuthModal();
+        showScreen('onboarding');
+      } else {
+        await window.signInWithEmailAndPassword(window.firebaseAuth, email, password);
+        closeAuthModal();
+        showScreen('app');
+      }
+    } catch (e) {
+      let msg = 'Something went wrong. Please try again.';
+      if (e.code === 'auth/email-already-in-use') msg = 'This email is already registered. Try signing in.';
+      if (e.code === 'auth/invalid-email') msg = 'Please enter a valid email address.';
+      if (e.code === 'auth/weak-password') msg = 'Password must be at least 6 characters.';
+      if (e.code === 'auth/user-not-found' || e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') msg = 'Invalid email or password.';
+      if (e.message) msg = e.message;
+      errEl.textContent = msg;
+      errEl.style.display = 'block';
+    }
+
+    btn.textContent = authMode === 'signup' ? 'Create Account' : 'Sign In';
+    btn.disabled = false;
+  }
+</script>
 </body>
 </html>
